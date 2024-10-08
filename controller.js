@@ -46,7 +46,7 @@ window.onload = function () {
     }
 
     // Check if the user's answer is correct
-    if (response.value == flashcards[currentFlashcardIndex].code) {
+    if (response.value.toLowerCase() == flashcards[currentFlashcardIndex].code) {
       console.log("Correct Answer!");
 
       // Remove the answered flashcard from the array
