@@ -44,6 +44,7 @@ h1 {
   border: 1px solid #ccc; /* Light border for the input */
   border-radius: 5px; /* Rounded corners for the input */
   margin-bottom: 10px; /* Space below the input */
+  font-size: 16px;
 }
 
 .next-button {
