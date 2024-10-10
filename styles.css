@@ -121,3 +121,31 @@ span {
     font-size: 1.3rem; /* Larger button text */
   }
 }
+
+/* Style for the buttons container */
+.buttons {
+  display: flex; /* Display buttons in a row */
+  gap: 10px; /* Space between buttons */
+  margin-bottom: 20px; /* Space below the buttons */
+  justify-content: center; /* Center buttons horizontally */
+}
+
+/* Style for individual buttons inside the buttons container */
+.buttons button {
+  background-color: #964ae2; /* Same primary button color */
+  color: #fff; /* White text for readability */
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 12px 20px; /* Padding to make buttons clickable and roomy */
+  font-size: 1.1rem; /* Font size to match other buttons */
+  cursor: pointer; /* Pointer cursor to indicate interactivity */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.buttons button:hover {
+  background-color: #7515d4; /* Darker blue on hover */
+}
+
+.buttons button:active {
+  background-color: #9a63c8; /* Even darker blue on click */
+}
