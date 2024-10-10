@@ -1,75 +1,116 @@
 window.onload = function () {
   let flashcard = document.getElementById("flashcard");
   let next = document.getElementById("keep");
+  let katakana = document.getElementById("katakana");
+  let hiragana = document.getElementById("hiragana");
+  let vocabulary = document.getElementById("vocabulary");
   let response = document.getElementById("answer");
+  let head = document.getElementById("head");
   let flashcards;
   let currentFlashcardIndex;
 
+  katakana.addEventListener("click", function () {
+    head.textContent = "Katakana Quiz";
+    readTextFile("katakana.json", function (text) {
+      flashcards = JSON.parse(text);
+      console.log(flashcards.length);
+
+      // Display the first katakana flashcard
+      displayFlashcard();
+
+      next.addEventListener("click", function () {
+        functionality(); // Check user response when pressing the button
+      });
+
+      response.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          functionality(); // Call the same function when pressing Enter
+        }
+      });
+    });
+  });
+
+  vocabulary.addEventListener("click", function () {
+    head.textContent = "Vocabulary Quiz";
+    readTextFile("resources.json", function (text) {
+      flashcards = JSON.parse(text);
+      console.log(flashcards.length);
+
+      // Display the first vocabulary flashcard
+      displayFlashcard();
+
+      next.addEventListener("click", function () {
+        functionality(); // Check user response when pressing the button
+      });
+
+      response.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          functionality(); // Call the same function when pressing Enter
+        }
+      });
+    });
+  });
+
+  // Function to display the flashcard
   function displayFlashcard() {
+    let container = document.getElementById("quiz-container");
+    // Remove existing message (if any)
+    let existingMessage = container.querySelector("span");
+    if (existingMessage) {
+      container.removeChild(existingMessage);
+    }
     if (flashcards.length > 0) {
-      // Get a random index
       currentFlashcardIndex = Math.floor(Math.random() * flashcards.length);
-      console.log(flashcards[currentFlashcardIndex].res);
-      flashcard.src = flashcards[currentFlashcardIndex].res; // Set the image source
+      flashcard.src = flashcards[currentFlashcardIndex].res;
     } else {
       console.log("No more flashcards available.");
     }
   }
 
-  readTextFile("resources.json", function (text) {
-    flashcards = JSON.parse(text);
-    console.log(flashcards.length);
-
-    // Display the first flashcard
-    displayFlashcard();
-
-    next.addEventListener("click", function () {
-      functionality();
-    });
-
-    response.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault(); // Prevent the form from submitting or reloading the page
-        functionality(); // Call the same function as for the button click
-      }
-    });
-  });
-
+  // Function to handle user response
   function functionality() {
-    console.log("Current Index:", currentFlashcardIndex);
-    console.log("User Response:", response.value);
     let container = document.getElementById("quiz-container");
-
+    // Remove existing message (if any)
     let existingMessage = container.querySelector("span");
     if (existingMessage) {
       container.removeChild(existingMessage);
     }
 
     // Check if the user's answer is correct
-    if (response.value.toLowerCase() == flashcards[currentFlashcardIndex].code) {
+    if (
+      response.value.toLowerCase() === flashcards[currentFlashcardIndex].code
+    ) {
       console.log("Correct Answer!");
+      clearMessage();
 
-      // Remove the answered flashcard from the array
+      // Remove the correct flashcard from the array
       flashcards.splice(currentFlashcardIndex, 1);
-      console.log(
-        "Flashcard removed. Remaining flashcards:",
-        flashcards.length
-      );
 
       // Display the next flashcard
       displayFlashcard();
     } else {
-      // Create a new span element for the message
+      // Show the incorrect message and do NOT move to the next flashcard
       let message = document.createElement("span");
       message.textContent = "Incorrect Answer. Try Again!";
-      message.style.color = "red"; // Optional: Add some styling
-
-      // Append the message to the container
+      message.style.color = "red";
       container.appendChild(message);
     }
+
+    // Clear the input field
     response.value = "";
   }
 
+  function clearMessage() {
+    let container = document.getElementById("quiz-container");
+    let existingMessage = container.querySelector("span");
+    if (existingMessage) {
+      container.removeChild(existingMessage);
+    }
+  }
+
+  // Function to read the JSON file
   function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
     rawFile.overrideMimeType("application/json");
