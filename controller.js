@@ -65,6 +65,7 @@ window.onload = function () {
       currentFlashcardIndex = Math.floor(Math.random() * flashcards.length);
       flashcard.src = flashcards[currentFlashcardIndex].res;
     } else {
+      endGame();
       console.log("No more flashcards available.");
     }
   }
@@ -108,6 +109,24 @@ window.onload = function () {
     if (existingMessage) {
       container.removeChild(existingMessage);
     }
+  }
+
+  function endGame() {
+    let container = document.getElementById("quiz-container");
+    container.innerHTML = ""; // Clear the quiz container
+    let message = document.createElement("p");
+    message.textContent = "Congratulations! You've finished the quiz.";
+    message.style.fontSize = "1.5em";
+    message.style.color = "green";
+    container.appendChild(message);
+
+    let restartButton = document.createElement("button");
+    restartButton.textContent = "Play Again";
+    restartButton.className = "next-button";
+    restartButton.addEventListener("click", function () {
+      location.reload(); // Reload the page to start a new game
+    });
+    container.appendChild(restartButton);
   }
 
   // Function to read the JSON file
