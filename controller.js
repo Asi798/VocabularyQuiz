@@ -1,15 +1,42 @@
 window.onload = function () {
-  let flashcard = document.getElementById("flashcard");
-  let next = document.getElementById("keep");
+  let flashcard;
   let katakana = document.getElementById("katakana");
   let hiragana = document.getElementById("hiragana");
   let vocabulary = document.getElementById("vocabulary");
-  let response = document.getElementById("answer");
+  let multi = document.getElementById("multiple");
+  let container = document.getElementById("quiz-container");
   let head = document.getElementById("head");
   let flashcards;
   let currentFlashcardIndex;
+  let next;
+  let response;
+  let word;
+  let words;
+  let multiContainer;
 
   katakana.addEventListener("click", function () {
+    let respuesta = container.querySelector("input");
+    word = container.querySelector("h2");
+    multiContainer = document.getElementById("multi-answer");
+    if (!respuesta) {
+      response = document.createElement("input");
+      next = document.createElement("button");
+      flashcard = document.createElement("img");
+      flashcard.className = "flashcard";
+      flashcard.id = "flashcard";
+      next.className = "next-button";
+      next.id = "keep";
+      next.innerHTML = "Next";
+      response.className = "answer";
+      response.id = "answer";
+      if (word) {
+        word.remove();
+        multiContainer.remove();
+      }
+      container.appendChild(flashcard);
+      container.appendChild(response);
+      container.appendChild(next);
+    }
     head.textContent = "Katakana Quiz";
     readTextFile("katakana.json", function (text) {
       flashcards = JSON.parse(text);
@@ -31,8 +58,121 @@ window.onload = function () {
     });
   });
 
+  multi.addEventListener("click", function () {
+    head.textContent = "Multiple Choice Vocab Quiz";
+    let checkWord = document.querySelector("h2");
+    if (!checkWord) {
+      word = document.createElement("h2");
+      container.appendChild(word);
+    }
+
+    if (flashcard) {
+      flashcard.remove();
+      next.remove();
+      response.remove();
+    }
+
+    let indexs = new Set();
+    let buttonsContainer = document.createElement("div"); // Container for buttons
+    buttonsContainer.id = "multi-answer";
+    container.appendChild(buttonsContainer); // Add the container to your main quiz area
+
+    readTextFile("vocab.json", function (text) {
+      words = JSON.parse(text);
+
+      function getUniqueRandomIndex() {
+        let currentFlashcardIndexx;
+        do {
+          currentFlashcardIndexx = Math.floor(Math.random() * words.length);
+        } while (indexs.has(currentFlashcardIndexx));
+        indexs.add(currentFlashcardIndexx);
+        return currentFlashcardIndexx;
+      }
+
+      function loadNextQuestion() {
+        // Clear previous question and buttons
+        word.innerHTML = "";
+        buttonsContainer.innerHTML = ""; // Clear previous buttons
+
+        if (indexs.size < words.length) {
+          let uniqueIndex = getUniqueRandomIndex();
+          let correctAnswer = words[uniqueIndex].eng;
+
+          // Display the question
+          word.innerHTML = words[uniqueIndex].jap;
+
+          // Randomize correct answer position
+          let correctPosition = Math.floor(Math.random() * 4);
+          let usedIndexes = new Set([uniqueIndex]); // Start with the correct answer's index
+
+          for (let i = 0; i < 4; ++i) {
+            let respuesta = document.createElement("button");
+            respuesta.className = "respuesta";
+
+            if (i === correctPosition) {
+              respuesta.innerHTML = correctAnswer;
+              respuesta.id = "correct";
+            } else {
+              let randomIndex;
+              do {
+                randomIndex = Math.floor(Math.random() * words.length);
+              } while (
+                usedIndexes.has(randomIndex) ||
+                randomIndex === uniqueIndex
+              );
+              respuesta.innerHTML = words[randomIndex].eng;
+              respuesta.id = "fake";
+            }
+
+            respuesta.addEventListener("click", function () {
+              if (respuesta.id === "correct") {
+                console.log("Correct Answer!");
+                loadNextQuestion(); // Load a new question if correct
+              } else {
+                console.log("Incorrect Answer. Try Again!");
+                respuesta.remove();
+              }
+            });
+
+            buttonsContainer.appendChild(respuesta);
+          }
+        } else {
+          console.log("All unique words have been used.");
+          word.innerHTML = "Congratulations! You've completed the quiz.";
+          buttonsContainer.innerHTML = ""; // Clear the buttons at the end
+        }
+      }
+
+      // Load the first question
+      loadNextQuestion();
+    });
+  });
+
   vocabulary.addEventListener("click", function () {
+    let respuesta = container.querySelector("input");
+    word = container.querySelector("h2");
+    multiContainer = document.getElementById("multi-answer");
+    if (!respuesta) {
+      response = document.createElement("input");
+      next = document.createElement("button");
+      flashcard = document.createElement("img");
+      flashcard.className = "flashcard";
+      flashcard.id = "flashcard";
+      next.className = "next-button";
+      next.id = "keep";
+      next.innerHTML = "Next";
+      response.className = "answer";
+      response.id = "answer";
+      if (word) {
+        word.remove();
+        multiContainer.remove();
+      }
+      container.appendChild(flashcard);
+      container.appendChild(response);
+      container.appendChild(next);
+    }
     head.textContent = "Vocabulary Quiz";
+
     readTextFile("resources.json", function (text) {
       flashcards = JSON.parse(text);
       console.log(flashcards.length);
