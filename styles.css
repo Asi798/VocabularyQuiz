@@ -264,10 +264,6 @@ h2 {
   background-color: #45a049;
 }
 
-.respuesta:active {
-  background-color: #3d8f3c;
-}
-
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .quiz-container {
